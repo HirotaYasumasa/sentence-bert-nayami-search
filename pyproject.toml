@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "sentence-bert-nayami-search"
+version = "0.1.0"
+description = ""
+authors = ["HirotaYasumasa <mi23a005@oecu.jp>"]
+readme = "README.md"
+license = "MIT"
+packages = [{include = "nayami_search"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.0"
+classopt = "^0.2.1"
+scikit-learn = "^1.4.0"
+tqdm = "^4.66.1"
+torch = "^2.1.2"
+sentence-transformers = "^2.2.2"
+fugashi = "^1.3.0"
+unidic-lite = "^1.0.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
