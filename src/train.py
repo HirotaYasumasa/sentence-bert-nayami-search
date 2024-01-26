@@ -28,7 +28,7 @@ class Args:
   seed: int = 42
 
   #細分類=1, 小分類=2, 中分類=3, 大分類=4
-  sizuoka_class: int = 1
+  shizuoka_class: int = 1
   test_size: float = 0.30
 
   def __post_init__(self):
@@ -79,7 +79,7 @@ def preprocess_df(nayami_df: pd.DataFrame) -> DataLoader:
   nayami_df['content'] = nayami_df['content'].map(lambda x: unicodedata.normalize('NFKC', x))
   nayami_df['content'] = nayami_df['content'].map(lambda x: x.replace('\n', ''))
 
-  nayami_df['category_id'] = nayami_df['category_id'].map(lambda x: split_category_id(x, args.sizuoka_class))
+  nayami_df['category_id'] = nayami_df['category_id'].map(lambda x: split_category_id(x, args.shizuoka_class))
   nayami_df['labels'] = nayami_df['category_id'].astype('category').cat.codes
 
   train_df, test_df = train_test_split(nayami_df, test_size=args.test_size, stratify=nayami_df['labels'], random_state=args.seed)
@@ -97,7 +97,7 @@ def args_to_dict(args):
 def main(args: Args):
   random.seed(args.seed)
 
-  nayami_df: pd.DataFrame[{'id': int, 'type': str, 'category_id': str, 'content': str}] = pd.read_csv(args.input_dir / 'sizuoka_nayami_subclass.csv')
+  nayami_df: pd.DataFrame[{'id': int, 'type': str, 'category_id': str, 'content': str}] = pd.read_csv(args.input_dir / 'shizuoka_nayami_subclass.csv')
 
   preprocess_df(nayami_df)
 
@@ -111,10 +111,10 @@ def main(args: Args):
 
   train_dataloader = make_dataloader(train_df)
 
-  with open(args.model_dir / 'config.json', 'w', encoding='utf-8') as f:
+  with open(args.model_dir / 'setting.json', 'w', encoding='utf-8') as f:
     json.dump(args_to_dict(args), f, ensure_ascii=False, indent=2)
 
-  model.fit(train_objectives=[(train_dataloader, loss)], epochs=args.epochs, warmup_steps=100, optimizer_class=torch.optim.AdamW, optimizer_params={'lr': 2e-5}, weight_decay=0.01, evaluation_steps=100, output_path=args.model_dir)
+  model.fit(train_objectives=[(train_dataloader, loss)], epochs=args.epochs, warmup_steps=100, optimizer_class=torch.optim.AdamW, optimizer_params={'lr': 2e-5}, weight_decay=0.01, evaluation_steps=100, output_path=str(args.model_dir))
 
 if __name__ == '__main__':
   args = Args.from_args()
